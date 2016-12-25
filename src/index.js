@@ -13,16 +13,32 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            locations: []
+            locations: [],
+            currentPos: { lat: 1212, lng: 100}
         };
 
         this.addLocation = this.addLocation.bind(this);
+        this.setPosition = this.setPosition.bind(this);
+        this.handleLatChange = this.handleLatChange.bind(this);
+        this.handleLngChange = this.handleLngChange.bind(this);
     }
 
     addLocation(name) {
         this.setState({
             locations: this.state.locations.concat({ name: name })
         });
+    }
+
+    setPosition(lat, lng) {
+        this.setState({ currentPos: { lat: lat, lng: lng } });
+    }
+
+    handleLatChange(e) {
+        this.setState({ currentPos: { ...this.state.currentPos, lat: e.target.value }});
+    }
+
+    handleLngChange(e) {
+        this.setState({ currentPos: { ...this.state.currentPos, lng: e.target.value }});
     }
 
     componentDidMount() {
@@ -62,11 +78,14 @@ class App extends React.Component {
                         <div className="columns">
                             <div className="column is-one-quarter">
                                 <h2 className="title is-4"> Tambah Lokasi </h2>
-                                <LocationFormComponent addLocation={this.addLocation}/>
+                                <LocationFormComponent
+                                    handleLatChange={this.handleLatChange}
+                                    handleLngChange={this.handleLngChange}
+                                    currentPos={this.state.currentPos} addLocation={this.addLocation}/>
                             </div>
                             <div className="column">
                                 <h2 className="title is-4"> Peta </h2>
-                                <MapComponent locations={this.state.locations} />
+                                <MapComponent setPosition={this.setPosition} locations={this.state.locations} />
                             </div>
                             <div className="column is-one-quarter">
                                 <h2 className="title is-4"> Daftar Lokasi </h2>

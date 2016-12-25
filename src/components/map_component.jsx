@@ -24,7 +24,6 @@ export default class MapComponent extends React.Component {
         this.map = new window.google.maps.Map(
             document.getElementById("map"),
             {
-                center: { lat: -32.397, lng: 150.644 },
                 zoom: 15
             }
         );
@@ -33,7 +32,23 @@ export default class MapComponent extends React.Component {
         let service = new window.google.maps.places.PlacesService(this.map);
 
         service.textSearch({ query: "Pontianak" }, (result) => {
-            this.map.panTo(result[0].geometry.location);
+            this.defaultPosition = result[0].geometry.location;
+            this.map.setCenter(this.defaultPosition);
+
+            this.pointerMarker = new window.google.maps.Marker({
+               position: this.defaultPosition,
+               map: this.map
+           });
+        })
+
+        /* Handle clicks */
+        this.map.addListener("click", (e) => {
+            this.props.setPosition(e.latLng.lat(), e.latLng.lng());
+
+            if (this.pointerMarker != null) {
+                this.pointerMarker.setPosition(e.latLng);
+            }
+
         });
 
         console.log("Script succesfully loaded!");
