@@ -1,21 +1,26 @@
 import React from "react";
+import FlipMove from "react-flip-move";
+import Location from "./location.jsx";
 
 export default class LocationListComponent extends React.Component {
     render() {
-        let locations = this.props.locations.map((location, index) => {
+        let locations = this.props.locations.map((location) => {
             return (
-                <div className="box" key={index}>
-                    <p> <strong> Name: </strong> </p>
-                    <p> {location.name} </p>
-                    <p> <strong> Description: </strong> </p>
-                    <p> {location.description} </p>
-
-                </div>);
+                <Location
+                    key={location.id}
+                    id={location.id}
+                    name={location.name}
+                    description={location.description}
+                    handleDeleteLocation={this.props.handleDeleteLocation}
+                />
+            );
         });
 
         return (
             <div>
-                {locations}
+                <FlipMove>
+                    {locations}
+                </FlipMove>
             </div>
         );
     }

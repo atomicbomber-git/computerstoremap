@@ -12,37 +12,36 @@ import MapComponent from "./components/map_component.jsx";
 class App extends React.Component {
     constructor(props) {
         super(props);
+
+        this.defaultCurrentPos = {
+            name: "",
+            lat: "",
+            lng: "",
+            desc: ""
+        };
+
         this.state = {
             locations: [],
-            currentPos: { lat: 1212, lng: 100}
+            currentPos: this.defaultCurrentPos,
+            isFormBeingSubmitted: false
         };
+
+        this.backendURL = "http://localhost/gis/gis_new";
 
         this.addLocation = this.addLocation.bind(this);
         this.setPosition = this.setPosition.bind(this);
         this.handleLatChange = this.handleLatChange.bind(this);
         this.handleLngChange = this.handleLngChange.bind(this);
+        this.handleDescChange = this.handleDescChange.bind(this);
+        this.handleNameChange = this.handleNameChange.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+        this.handleDeleteLocation = this.handleDeleteLocation.bind(this);
+        this.fetchLocations = this.fetchLocations.bind(this);
+        this.clearFormFields = this.clearFormFields.bind(this);
     }
 
-    addLocation(name) {
-        this.setState({
-            locations: this.state.locations.concat({ name: name })
-        });
-    }
-
-    setPosition(lat, lng) {
-        this.setState({ currentPos: { lat: lat, lng: lng } });
-    }
-
-    handleLatChange(e) {
-        this.setState({ currentPos: { ...this.state.currentPos, lat: e.target.value }});
-    }
-
-    handleLngChange(e) {
-        this.setState({ currentPos: { ...this.state.currentPos, lng: e.target.value }});
-    }
-
-    componentDidMount() {
-        axios.get("http://localhost/gis/gis_new/")
+    fetchLocations() {
+        axios.get(`${this.backendURL}/locations`)
             .then((response) => {
                 /* AJAX request successful */
                 this.setState({
@@ -54,7 +53,82 @@ class App extends React.Component {
             });
     }
 
+    clearFormFields() {
+        this.setState({ currentPos: this.defaultCurrentPos });
+    }
+
+    addLocation(name) {
+        this.setState({
+            locations: this.state.locations.concat({ name: name })
+        });
+    }
+
+    setPosition(lat, lng) {
+        this.setState({ currentPos: { ...this.state.currentPos, lat: lat, lng: lng } });
+    }
+
+    /* Functions related to the new location input form */
+    handleLatChange(e) {
+        this.setState({ currentPos: { ...this.state.currentPos, lat: e.target.value }});
+    }
+
+    handleLngChange(e) {
+        this.setState({ currentPos: { ...this.state.currentPos, lng: e.target.value }});
+    }
+
+    handleDescChange(e) {
+        this.setState({ currentPos: { ...this.state.currentPos, desc: e.target.value }});
+    }
+
+    handleNameChange(e) {
+        this.setState({ currentPos: { ...this.state.currentPos, name: e.target.value } });
+    }
+
+    handleFormSubmit(e) {
+        e.preventDefault();
+
+        /* Attempt to save the location to the server */
+        this.setState({ isFormBeingSubmitted: true });
+
+        console.log(this.state.currentPos);
+
+        axios.post(`${this.backendURL}/save_location`, this.state.currentPos)
+            .then((response) => {
+                console.log(response)
+                this.setState({ isFormBeingSubmitted: false });
+
+                this.fetchLocations();
+            })
+            .catch((error) => {
+                this.setState({ isFormBeingSubmitted: false });
+                console.log(error);
+            });
+    }
+
+    handleDeleteLocation(id) {
+        axios.get(`${this.backendURL}/delete_location/${id}`)
+            .then((response) => {
+                console.log("Success");
+                this.fetchLocations();
+            })
+            .catch((error) => { console.log("Error") });
+
+
+        console.log("Detected " + id);
+    }
+
+    componentDidMount() {
+        this.fetchLocations();
+    }
+
     render() {
+
+        const listStyle = {
+            "height": "500px",
+            "padding": "10px",
+            "overflow": "auto"
+        }
+
         return (
             <div>
                 <section className="hero is-dark">
@@ -81,6 +155,10 @@ class App extends React.Component {
                                 <LocationFormComponent
                                     handleLatChange={this.handleLatChange}
                                     handleLngChange={this.handleLngChange}
+                                    handleDescChange={this.handleDescChange}
+                                    handleNameChange={this.handleNameChange}
+                                    handleFormSubmit={this.handleFormSubmit}
+                                    isFormBeingSubmitted={this.state.isFormBeingSubmitted}
                                     currentPos={this.state.currentPos} addLocation={this.addLocation}/>
                             </div>
                             <div className="column">
@@ -89,7 +167,12 @@ class App extends React.Component {
                             </div>
                             <div className="column is-one-quarter">
                                 <h2 className="title is-4"> Daftar Lokasi </h2>
-                                <LocationListComponent locations={this.state.locations}/>
+                                <div style={listStyle}>
+                                    <LocationListComponent
+                                        locations={this.state.locations}
+                                        handleDeleteLocation={this.handleDeleteLocation}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

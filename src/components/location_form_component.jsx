@@ -2,49 +2,16 @@ import React from "react";
 import FileInputComponent from "./file_input_component.jsx";
 
 export default class LocationFormComponent extends React.Component {
-    constructor(props) {
-        super(props);
-
-        /* Default state */
-        this.defaultState = {
-            currentName: "",
-            currentDesc: ""
-        };
-
-        this.state = this.defaultState;
-
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleDescChange = this.handleDescChange.bind(this);
-    }
-
-    componentDidMount() {
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-        console.log({
-            name: this.state.currentName,
-            desc: this.state.currentDesc,
-            lat: this.props.currentPos.lat,
-            lng: this.props.currentPos.lng
-        });
-    }
-
-    handleNameChange(e) {
-        this.setState({ currentName: e.target.value });
-    }
-
-    handleDescChange(e) {
-        this.setState({ currentDesc: e.target.value });
+    buttonStyle() {
+        return this.props.isFormBeingSubmitted ? "button is-primary is-fullwidth is-loading" : "button is-primary is-fullwidth";
     }
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.props.handleFormSubmit}>
                 <div className="control">
                     <label className="label"> Name: </label>
-                    <input className="input" onChange={this.handleNameChange} value={this.state.currentName} type="text" placeholder="Location name"/>
+                    <input className="input" onChange={this.props.handleNameChange} value={this.props.currentPos.name} type="text" placeholder="Location name"/>
                 </div>
 
                 <div className="control">
@@ -59,7 +26,7 @@ export default class LocationFormComponent extends React.Component {
 
                 <div className="control">
                     <label className="label"> Description: </label>
-                    <textarea onChange={this.handleDescChange} value={this.state.currentDesc} className="textarea" placeholder="Description"></textarea>
+                    <textarea onChange={this.props.handleDescChange} value={this.props.currentPos.desc} className="textarea" placeholder="Description"></textarea>
                 </div>
 
                 <div className="control">
@@ -68,7 +35,7 @@ export default class LocationFormComponent extends React.Component {
                 </div>
 
                 <div className="control">
-                    <button className="button is-primary">
+                    <button className={this.buttonStyle()}>
                         Add Location
                     </button>
                 </div>
