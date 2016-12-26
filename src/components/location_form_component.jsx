@@ -2,8 +2,27 @@ import React from "react";
 import FileInputComponent from "./file_input_component.jsx";
 
 export default class LocationFormComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.getErrorData.bind(this);
+    }
+
     buttonStyle() {
         return this.props.isFormBeingSubmitted ? "button is-primary is-fullwidth is-loading" : "button is-primary is-fullwidth";
+    }
+
+    getErrorData(errorProperty) {
+        if (this.props.formError[errorProperty]) {
+            return {
+                style: "is-danger",
+                help: <div className="help is-danger"> {this.props.formError[errorProperty]} </div>
+            };
+        }
+
+        return {
+            style: "input",
+            help: ""
+        };
     }
 
     render() {
@@ -11,22 +30,26 @@ export default class LocationFormComponent extends React.Component {
             <form onSubmit={this.props.handleFormSubmit}>
                 <div className="control">
                     <label className="label"> Name: </label>
-                    <input className="input" onChange={this.props.handleNameChange} value={this.props.currentPos.name} type="text" placeholder="Location name"/>
+                    <input className={this.getErrorData("name").style + " input"} onChange={this.props.handleNameChange} value={this.props.currentPos.name} type="text" placeholder="Location name"/>
+                    {this.getErrorData("name").help}
                 </div>
 
                 <div className="control">
                     <label className="label"> Latitude: </label>
-                    <input onChange={this.props.handleLatChange} value={this.props.currentPos.lat} type="number" className="input" placeholder="Latitude"/>
+                    <input className={this.getErrorData("lat").style + " input"} onChange={this.props.handleLatChange} value={this.props.currentPos.lat} type="number" placeholder="Latitude"/>
+                    {this.getErrorData("lat").help}
                 </div>
 
                 <div className="control">
                     <label className="label"> Longitude: </label>
-                    <input onChange={this.props.handleLngChange} value={this.props.currentPos.lng} type="number" className="input" placeholder="Longitude"/>
+                    <input className={this.getErrorData("lng").style + " input"} onChange={this.props.handleLngChange} value={this.props.currentPos.lng} type="number" placeholder="Longitude"/>
+                    {this.getErrorData("lng").help}
                 </div>
 
                 <div className="control">
                     <label className="label"> Description: </label>
-                    <textarea onChange={this.props.handleDescChange} value={this.props.currentPos.desc} className="textarea" placeholder="Description"></textarea>
+                    <textarea className={this.getErrorData("desc").style + " textarea"} onChange={this.props.handleDescChange} value={this.props.currentPos.desc} placeholder="Description"></textarea>
+                    {this.getErrorData("desc").help}
                 </div>
 
                 <div className="control">

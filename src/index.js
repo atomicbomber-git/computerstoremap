@@ -13,22 +13,18 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.defaultCurrentPos = {
-            name: "",
-            lat: "",
-            lng: "",
-            desc: ""
-        };
+        this.defaultCurrentPos = { name: "", lat: "", lng: "", desc: "" };
+        this.defaultFormError = { name: "", lat: "", lng: "", desc: "" };
 
         this.state = {
             locations: [],
             currentPos: this.defaultCurrentPos,
+            formError: this.defaultFormError,
             isFormBeingSubmitted: false
         };
 
         this.backendURL = "http://localhost/gis/gis_new";
 
-        this.addLocation = this.addLocation.bind(this);
         this.setPosition = this.setPosition.bind(this);
         this.handleLatChange = this.handleLatChange.bind(this);
         this.handleLngChange = this.handleLngChange.bind(this);
@@ -36,8 +32,6 @@ class App extends React.Component {
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleDeleteLocation = this.handleDeleteLocation.bind(this);
-        this.fetchLocations = this.fetchLocations.bind(this);
-        this.clearFormFields = this.clearFormFields.bind(this);
     }
 
     fetchLocations() {
@@ -49,7 +43,7 @@ class App extends React.Component {
                 });
             })
             .catch(function(error) {
-                console.log(error);
+
             });
     }
 
@@ -57,10 +51,8 @@ class App extends React.Component {
         this.setState({ currentPos: this.defaultCurrentPos });
     }
 
-    addLocation(name) {
-        this.setState({
-            locations: this.state.locations.concat({ name: name })
-        });
+    clearFormError() {
+        this.setState({ formError: this.defaultFormError });
     }
 
     setPosition(lat, lng) {
@@ -90,18 +82,20 @@ class App extends React.Component {
         /* Attempt to save the location to the server */
         this.setState({ isFormBeingSubmitted: true });
 
-        console.log(this.state.currentPos);
-
         axios.post(`${this.backendURL}/save_location`, this.state.currentPos)
             .then((response) => {
-                console.log(response)
                 this.setState({ isFormBeingSubmitted: false });
-
+                this.clearFormError();
+                this.clearFormFields();
                 this.fetchLocations();
             })
             .catch((error) => {
                 this.setState({ isFormBeingSubmitted: false });
-                console.log(error);
+
+                if (error.response) {
+                    this.setState({ "formError": error.response.data });
+                }
+
             });
     }
 
@@ -159,6 +153,7 @@ class App extends React.Component {
                                     handleNameChange={this.handleNameChange}
                                     handleFormSubmit={this.handleFormSubmit}
                                     isFormBeingSubmitted={this.state.isFormBeingSubmitted}
+                                    formError={this.state.formError}
                                     currentPos={this.state.currentPos} addLocation={this.addLocation}/>
                             </div>
                             <div className="column">
