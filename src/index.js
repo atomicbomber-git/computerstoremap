@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import axios from "axios";
 import "../node_modules/bulma/css/bulma.css";
 import "./css/font-awesome.css";
+import myLocationIcon from "./icons/my_location.svg";
 
 /* Home made components */
 import LocationForm from "./components/location_form.jsx";
@@ -73,7 +74,8 @@ class App extends React.Component {
 
             this.pointerMarker = new window.google.maps.Marker({
                position: this.defaultPosition,
-               map: map
+               map: map,
+               icon: myLocationIcon
            });
         })
 
@@ -214,7 +216,7 @@ class App extends React.Component {
                 <section className="section">
                     <div className="container">
                         <div className="columns">
-                            <div className="column is-one-quarter">
+                            <div className="column is-3">
                                 <h2 className="title is-4"> Tambah Lokasi </h2>
                                 <LocationForm
                                     handleLatChange={this.handleLatChange}
@@ -224,14 +226,15 @@ class App extends React.Component {
                                     handleFormSubmit={this.handleFormSubmit}
                                     isFormBeingSubmitted={this.state.isFormBeingSubmitted}
                                     formError={this.state.formError}
-                                    currentPos={this.state.currentPos} addLocation={this.addLocation}/>
+                                    currentPos={this.state.currentPos}
+                                    addLocation={this.addLocation} />
                             </div>
-                            <div className="column">
+                            <div className="column is-6">
                                 <h2 className="title is-4"> Peta </h2>
                                 <div id="map" style={mapStyle}> </div>
                                 {markers}
                             </div>
-                            <div className="column is-one-quarter">
+                            <div className="column is-3">
                                 <h2 className="title is-4"> Daftar Lokasi </h2>
                                 <div style={listStyle}>
                                     <LocationList
