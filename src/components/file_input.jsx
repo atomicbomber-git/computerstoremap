@@ -1,6 +1,6 @@
 import React from "react";
 
-export default class FileInputComponent extends React.Component {
+export default class FileInput extends React.Component {
     constructor(props) {
         super(props);
         this.state = { "fileName": "No file selected." };

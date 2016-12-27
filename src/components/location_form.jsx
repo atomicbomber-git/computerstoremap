@@ -1,7 +1,7 @@
 import React from "react";
-import FileInputComponent from "./file_input_component.jsx";
+import FileInput from "./file_input.jsx";
 
-export default class LocationFormComponent extends React.Component {
+export default class LocationForm extends React.Component {
     constructor(props) {
         super(props);
         this.getErrorData.bind(this);
@@ -54,7 +54,7 @@ export default class LocationFormComponent extends React.Component {
 
                 <div className="control">
                     <label className="label"> Upload Picture: </label>
-                    <FileInputComponent className="button is-fullwidth"/>
+                    <FileInput className="button is-fullwidth"/>
                 </div>
 
                 <div className="control">

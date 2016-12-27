@@ -2,7 +2,7 @@ import React from "react";
 import FlipMove from "react-flip-move";
 import Location from "./location.jsx";
 
-export default class LocationListComponent extends React.Component {
+export default class LocationList extends React.Component {
     render() {
         let locations = this.props.locations.map((location) => {
             return (
@@ -10,7 +10,8 @@ export default class LocationListComponent extends React.Component {
                     key={location.id}
                     id={location.id}
                     name={location.name}
-                    description={location.description}
+                    location={location}
+                    gotoLocation={this.props.gotoLocation}
                     handleDeleteLocation={this.props.handleDeleteLocation}
                 />
             );

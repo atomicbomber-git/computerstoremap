@@ -5,9 +5,9 @@ import "../node_modules/bulma/css/bulma.css";
 import "./css/font-awesome.css";
 
 /* Home made components */
-import LocationFormComponent from "./components/location_form_component.jsx";
-import LocationListComponent from "./components/location_list_component.jsx";
-import MapComponent from "./components/map_component.jsx";
+import LocationForm from "./components/location_form.jsx";
+import LocationList from "./components/location_list.jsx";
+import Marker from "./components/marker.jsx";
 
 class App extends React.Component {
     constructor(props) {
@@ -18,6 +18,7 @@ class App extends React.Component {
 
         this.state = {
             locations: [],
+            map: null,
             currentPos: this.defaultCurrentPos,
             formError: this.defaultFormError,
             isFormBeingSubmitted: false
@@ -32,6 +33,61 @@ class App extends React.Component {
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleDeleteLocation = this.handleDeleteLocation.bind(this);
+        this.fetchLocations = this.fetchLocations.bind(this);
+        this.clearFormFields = this.clearFormFields.bind(this);
+        this.gotoLocation = this.gotoLocation.bind(this);
+    }
+
+    componentDidMount() {
+        this.fetchLocations();
+        this.loadGoogleMapAPI();
+    }
+
+    loadGoogleMapAPI() {
+        /* Programmatically add a script tag in order to load the Google Map JS API */
+        const googleMapScriptTag = document.createElement("script");
+        const API_KEY = "AIzaSyDt7-RR1AbYQbYPGHjdSV5WFK-bniFbezw";
+        googleMapScriptTag.setAttribute("src", `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap&libraries=places`);
+        googleMapScriptTag.setAttribute("async", true);
+        googleMapScriptTag.setAttribute("defer", true);
+        document.body.appendChild(googleMapScriptTag);
+
+        /* Bind this class's initMap to the window's one */
+        window.initMap = this.initMap.bind(this);
+    }
+
+    initMap() {
+        /* Initialize and show the map */
+        const map = new window.google.maps.Map(
+            document.getElementById("map"), { zoom: 15 }
+        );
+
+        this.setState({ map: map });
+
+        /* Get Pontianak's Position and then go to there */
+        let service = new window.google.maps.places.PlacesService(map);
+
+        service.textSearch({ query: "Pontianak" }, (result) => {
+            this.defaultPosition = result[0].geometry.location;
+            map.setCenter(this.defaultPosition);
+
+            this.pointerMarker = new window.google.maps.Marker({
+               position: this.defaultPosition,
+               map: map
+           });
+        })
+
+        /* Handle clicks */
+        map.addListener("click", (e) => {
+            this.setPosition(e.latLng.lat(), e.latLng.lng());
+
+            if (this.pointerMarker != null) {
+                this.pointerMarker.setPosition(e.latLng);
+            }
+
+        });
+
+        console.log("The Google Maps API script has been succesfully loaded!");
     }
 
     fetchLocations() {
@@ -45,6 +101,10 @@ class App extends React.Component {
             .catch(function(error) {
 
             });
+    }
+
+    gotoLocation(lat, lng) {
+        this.state.map.panTo({lat, lng});
     }
 
     clearFormFields() {
@@ -111,16 +171,26 @@ class App extends React.Component {
         console.log("Detected " + id);
     }
 
-    componentDidMount() {
-        this.fetchLocations();
-    }
-
     render() {
 
         const listStyle = {
             "height": "500px",
             "padding": "10px",
             "overflow": "auto"
+        };
+
+        const mapStyle = {
+            background:"green",
+            width: "100%",
+            height: "450px"
+        };
+
+        /* Don't create any markers at all if the map hasn't been instantiated yet */
+        let markers = null;
+        if ( this.state.map ) {
+            markers = this.state.locations.map((location, index) => {
+                return (<Marker map={this.state.map} location={location} key={location.id}/>);
+            });
         }
 
         return (
@@ -146,7 +216,7 @@ class App extends React.Component {
                         <div className="columns">
                             <div className="column is-one-quarter">
                                 <h2 className="title is-4"> Tambah Lokasi </h2>
-                                <LocationFormComponent
+                                <LocationForm
                                     handleLatChange={this.handleLatChange}
                                     handleLngChange={this.handleLngChange}
                                     handleDescChange={this.handleDescChange}
@@ -158,12 +228,14 @@ class App extends React.Component {
                             </div>
                             <div className="column">
                                 <h2 className="title is-4"> Peta </h2>
-                                <MapComponent setPosition={this.setPosition} locations={this.state.locations} />
+                                <div id="map" style={mapStyle}> </div>
+                                {markers}
                             </div>
                             <div className="column is-one-quarter">
                                 <h2 className="title is-4"> Daftar Lokasi </h2>
                                 <div style={listStyle}>
-                                    <LocationListComponent
+                                    <LocationList
+                                        gotoLocation={this.gotoLocation}
                                         locations={this.state.locations}
                                         handleDeleteLocation={this.handleDeleteLocation}
                                     />
