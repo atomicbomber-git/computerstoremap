@@ -8,7 +8,6 @@ export default class Map extends React.Component {
     }
 
     componentDidMount() {
-        console.log("Map has successfully been mounted.");
         this.loadGoogleMapAPI();
     }
 

@@ -4,9 +4,6 @@ import storeIcon from "../icons/store.svg";
 export default class Marker extends React.Component {
     componentDidMount() {
         if ( ! this.marker ) {
-            console.log("Map" + this.props.map);
-            console.log("Marker hasn't been created yet. Creating marker now...");
-
             const {latitude, longitude} = this.props.location;
 
             this.marker = new window.google.maps.Marker({
@@ -23,15 +20,11 @@ export default class Marker extends React.Component {
                 content: this.infoWindowNode
             });
         }
-
-        console.log("Mounted!!!");
     }
 
     componentWillUnmount() {
         /* Unmounting. Destroying marker... */
         this.marker.setMap(null);
-
-        console.log("Dismounted!!!");
     }
 
     render() {

@@ -9,9 +9,6 @@ export default class FileInput extends React.Component {
     }
 
     onFileInputChange(e) {
-
-        console.log(e.target.value);
-
         let fileName = null;
         if (e.target.value === "") {
             fileName = "No file selected";

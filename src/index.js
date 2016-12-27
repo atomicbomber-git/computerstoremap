@@ -9,6 +9,7 @@ import myLocationIcon from "./icons/my_location.svg";
 import LocationForm from "./components/location_form.jsx";
 import LocationList from "./components/location_list.jsx";
 import Marker from "./components/marker.jsx";
+import KMLLayerContainer from "./components/kml_layer_container.jsx";
 
 class App extends React.Component {
     constructor(props) {
@@ -231,6 +232,7 @@ class App extends React.Component {
                             </div>
                             <div className="column is-6">
                                 <h2 className="title is-4"> Peta </h2>
+                                <KMLLayerContainer map={this.state.map} />
                                 <div id="map" style={mapStyle}> </div>
                                 {markers}
                             </div>
