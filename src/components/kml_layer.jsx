@@ -4,26 +4,41 @@ export default class KMLLayer extends React.Component {
     componentDidMount() {
         /* Instantiate the layer and store it */
         if (this.props.map) {
-            console.log("Executed " + this.props.resource);
             this.kmlLayer = new window.google.maps.KmlLayer(
                 this.props.resource,
                 {
-                    map: this.props.map
+                    preserveViewport: true,
                 }
             );
 
-            console.log(this.kmlLayer);
+            if (this.props.isVisible) {
+                this.kmlLayer.setMap(this.props.map);
+            }
+            else {
+                this.kmlLayer.setMap(null);
+            }
         }
-        else {
-            console.log("Fail");
+    }
+
+    componentWillUpdate(nextProps) {
+        if (this.kmlLayer) {
+            if (nextProps.isVisible) {
+                this.kmlLayer.setMap(this.props.map);
+            }
+            else {
+                this.kmlLayer.setMap(null);
+            }
         }
     }
 
     componentWillUnmount() {
         /* Destroy the layer */
+        if (this.kmlLayer) {
+            this.kmlLayer.setMap(null);
+        }
     }
 
     render() {
-        return <p> Test Test Test </p>;
+        return null;
     }
 }
