@@ -32,33 +32,40 @@ export default class EditModal extends React.Component {
                 <div className="modal is-active" key="1">
                     <div className="modal-background"> </div>
                     <div className="modal-content" style={{"maxWidth":  "400px"}}>
-                        <div className="box">
-                            <nav className="nav">
-                                <div className="nav-left"></div>
-                                <div className="nav-center">
-                                    <div className="nav-item">
-                                        <h1 className="title is-5"> Sunting Data Lokasi </h1>
-                                    </div>
-                                </div>
-                                <div className="nav-right">
-                                    <div className="nav-item">
-                                        <button onClick={this.props.closeModal} className="delete"></button>
-                                    </div>
-                                </div>
-                            </nav>
 
-                            <div className="container">
+                        <header className="modal-card-head">
+                            <p className="modal-card-title"> Sunting Data Lokasi </p>
+                            <button className="delete" onClick={this.props.closeModal}></button>
+                        </header>
+
+                        <section className="modal-card-body">
+                            <form className="container">
                                 <div className="control">
-                                    <label className="label"> Latitude: </label>
-                                    <input className="input" type="number"/>
+                                    <label className="label"> Nama: </label>
+                                    <input className="input" type="text" value={this.props.formData.name}/>
                                 </div>
 
                                 <div className="control">
                                     <label className="label"> Latitude: </label>
-                                    <input className="input" type="number"/>
+                                    <input className="input" type="number" value={this.props.formData.lat}/>
                                 </div>
-                            </div>
-                        </div>
+
+                                <div className="control">
+                                    <label className="label"> Longitude: </label>
+                                    <input className="input" type="number" value={this.props.formData.lng}/>
+                                </div>
+
+                                <div className="control">
+                                    <label className="label"> Deskripsi: </label>
+                                    <textarea className="textarea" value={this.props.formData.desc}></textarea>
+                                </div>
+                            </form>
+                        </section>
+
+                        <footer className="modal-card-foot">
+                            <a className="button is-primary"> Simpan </a>
+                            <a className="button" onClick={this.props.closeModal}> Batal </a>
+                        </footer>
                     </div>
                 </div>
             );
@@ -67,8 +74,8 @@ export default class EditModal extends React.Component {
         return (
             <ReactCSSTransitionGroup
                 transitionName="edit_modal"
-                transitionEnterTimeout="200"
-                transitionLeaveTimeout="200"
+                transitionEnterTimeout={200}
+                transitionLeaveTimeout={200}
                 >
                 {modal}
             </ReactCSSTransitionGroup>
