@@ -12,6 +12,7 @@ export default class LocationList extends React.Component {
                     name={location.name}
                     location={location}
                     gotoLocation={this.props.gotoLocation}
+                    handleEditLocation={this.props.handleEditLocation}
                     handleDeleteLocation={this.props.handleDeleteLocation}
                 />
             );

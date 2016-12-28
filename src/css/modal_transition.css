@@ -1,0 +1,17 @@
+.edit_modal-enter {
+  opacity: 0;
+}
+
+.edit_modal-enter.edit_modal-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.edit_modal-leave {
+  opacity: 1;
+}
+
+.edit_modal-leave.edit_modal-leave-active {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}

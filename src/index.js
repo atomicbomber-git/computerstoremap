@@ -10,6 +10,7 @@ import LocationForm from "./components/location_form.jsx";
 import LocationList from "./components/location_list.jsx";
 import Marker from "./components/marker.jsx";
 import KMLLayerContainer from "./components/kml_layer_container.jsx";
+import EditModal from "./components/edit_modal.jsx";
 
 class App extends React.Component {
     constructor(props) {
@@ -23,7 +24,9 @@ class App extends React.Component {
             map: null,
             currentPos: this.defaultCurrentPos,
             formError: this.defaultFormError,
-            isFormBeingSubmitted: false
+            isFormBeingSubmitted: false,
+            isCurrentlyEditing: false,
+            currentlyEditedId: null
         };
 
         this.backendURL = "http://localhost/gis/gis_new";
@@ -34,10 +37,12 @@ class App extends React.Component {
         this.handleDescChange = this.handleDescChange.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
+        this.handleEditLocation = this.handleEditLocation.bind(this);
         this.handleDeleteLocation = this.handleDeleteLocation.bind(this);
         this.fetchLocations = this.fetchLocations.bind(this);
         this.clearFormFields = this.clearFormFields.bind(this);
         this.gotoLocation = this.gotoLocation.bind(this);
+        this.cancelEditing = this.cancelEditing.bind(this);
     }
 
     componentDidMount() {
@@ -106,6 +111,11 @@ class App extends React.Component {
             });
     }
 
+    /* Turn off the editing mode */
+    cancelEditing() {
+        this.setState({ isCurrentlyEditing: false });
+    }
+
     gotoLocation(lat, lng) {
         this.state.map.panTo({lat, lng});
     }
@@ -162,6 +172,10 @@ class App extends React.Component {
             });
     }
 
+    handleEditLocation(id) {
+        this.setState({ currentlyEditedId: id, isCurrentlyEditing: true });
+    }
+
     handleDeleteLocation(id) {
         axios.get(`${this.backendURL}/delete_location/${id}`)
             .then((response) => {
@@ -198,6 +212,9 @@ class App extends React.Component {
 
         return (
             <div>
+
+                <EditModal isActive={this.state.isCurrentlyEditing} closeModal={this.cancelEditing} />
+
                 <section className="hero is-dark">
                     <div className="hero-body">
                         <div className="container">
@@ -243,6 +260,7 @@ class App extends React.Component {
                                         gotoLocation={this.gotoLocation}
                                         locations={this.state.locations}
                                         handleDeleteLocation={this.handleDeleteLocation}
+                                        handleEditLocation={this.handleEditLocation}
                                     />
                                 </div>
                             </div>

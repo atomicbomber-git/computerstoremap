@@ -39,14 +39,11 @@ export default class KMLLayerContainer extends React.Component {
 
     render() {
 
-        /*
-            Render KMLLayer components.
-        */
+        /* Render KMLLayer components. */
         let layers = null;
         if (this.props.map) {
             layers = this.state.kml_layers.map(
                 (layer, index) => {
-
                     const kml = (
                         <KMLLayer resource={layer.resource} isVisible={layer.isVisible} map={this.props.map}
                             key={index} label={layer.label}
@@ -80,13 +77,14 @@ export default class KMLLayerContainer extends React.Component {
                 <div className="level" style={ {"padding": "10px"} }>
                     <div className="level-left">
                         <div className="level-item">
-                            <h3 className="title is-6"> LAYER KML: </h3>
+                            <h3 className="title is-6"> Layer KML: </h3>
                         </div>
                         { layers ? layers.map(layer => layer.control) : <p> Loading... </p> }
                     </div>
                 </div>
 
                 { layers ? layers.map(layer => layer.kml) : null }
+
             </div>);
     }
 }

@@ -17,27 +17,31 @@ export default class Location extends React.Component {
                 <p> {this.props.location.longitude} </p>
                 <p> <strong> Deskripsi: </strong> </p>
                 <p> {this.props.location.description} </p>
-                <nav className="level" style={navStyle}>
-                    <div className="level-right">
-                        <div className="level-item">
-                            <button onClick={() => { this.props.gotoLocation(latitude, longitude) } } className="button is-info is-small">
-                                Arahkan
-                                <span className="icon is-small">
-                                    <i className="fa fa-map"> </i>
-                                </span>
-                            </button>
-                        </div>
-                        <div className="level-item">
-                            <button onClick={() => { this.props.handleDeleteLocation(this.props.id) } } className="button is-danger is-small is-outlined">
-                                Hapus
-                                <span className="icon is-small">
-                                    <i className="fa fa-remove"> </i>
-                                </span>
-                            </button>
-                        </div>
 
-                    </div>
-                </nav>
+                <div className="control has-addons" style={navStyle}>
+
+                    <button onClick={() => { this.props.handleEditLocation(this.props.id) }} className="button is-small">
+                        Sunting
+                        <span className="icon is-small">
+                            <i className="fa fa-pencil"> </i>
+                        </span>
+                    </button>
+
+                    <button onClick={() => { this.props.gotoLocation(latitude, longitude) } } className="button is-small">
+                        Arahkan
+                        <span className="icon is-small">
+                            <i className="fa fa-map"> </i>
+                        </span>
+                    </button>
+
+                    <button onClick={() => { this.props.handleDeleteLocation(this.props.id) } } className="button is-danger is-small">
+                        Hapus
+                        <span className="icon is-small">
+                            <i className="fa fa-trash"> </i>
+                        </span>
+                    </button>
+
+                </div>
             </div>
         );
     }
