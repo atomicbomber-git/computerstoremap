@@ -13,9 +13,9 @@ export default class KMLLayerContainer extends React.Component {
 
         this.state = {
             kml_layers: [
-                { label: "Layer Jalan", resource: road_layer, isVisible: true },
-                { label: "Layer Kecamatan", resource: district_layer, isVisible: false },
-                { label: "Layer Sungai", resource: river_layer, isVisible: true }
+                { label: "Layer Jalan", resource: road_layer, isVisible: false },
+                { label: "Layer Kecamatan", resource: district_layer, isVisible: true },
+                { label: "Layer Sungai", resource: river_layer, isVisible: false }
             ]
         };
 
@@ -42,24 +42,28 @@ export default class KMLLayerContainer extends React.Component {
         /*
             Render KMLLayer components.
         */
-        let layers = [];
+        let layers = null;
         if (this.props.map) {
             layers = this.state.kml_layers.map(
                 (layer, index) => {
 
                     const kml = (
-                        <KMLLayer
-                            resource={layer.resource}
-                            isVisible={layer.isVisible}
-                            map={this.props.map}
-                            key={index}
-                            label={layer.label}
+                        <KMLLayer resource={layer.resource} isVisible={layer.isVisible} map={this.props.map}
+                            key={index} label={layer.label}
                          />
                     );
 
                     const control = (
                         <div className="level-item" key={index}>
-                            <button onClick={() => { this.toggleVisibility(index); }} className="button is-primary"> {layer.label} </button>
+                            <button
+                                onClick={() => { this.toggleVisibility(index); }}
+                                className={ layer.isVisible ? "button is-danger is-small" : "button is-primary is-small" }>
+                                {layer.label}
+                                <span className="icon is-small">
+                                    <i className={ layer.isVisible ? "fa fa-eye-slash" : "fa fa-eye" }>
+                                    </i>
+                                </span>
+                            </button>
                         </div>
                     );
 
@@ -73,13 +77,16 @@ export default class KMLLayerContainer extends React.Component {
 
         return (
             <div>
-                <div className="level">
+                <div className="level" style={ {"padding": "10px"} }>
                     <div className="level-left">
-                        {layers.map(layer => layer.kml)}
+                        <div className="level-item">
+                            <h3 className="title is-6"> LAYER KML: </h3>
+                        </div>
+                        { layers ? layers.map(layer => layer.control) : <p> Loading... </p> }
                     </div>
                 </div>
 
-                {layers.map(layer => layer.control)}
+                { layers ? layers.map(layer => layer.kml) : null }
             </div>);
     }
 }

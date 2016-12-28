@@ -7,7 +7,8 @@ export default class KMLLayer extends React.Component {
             this.kmlLayer = new window.google.maps.KmlLayer(
                 this.props.resource,
                 {
-                    preserveViewport: true,
+                    suppressInfoWindows: true,
+                    preserveViewport: true
                 }
             );
 
@@ -20,15 +21,21 @@ export default class KMLLayer extends React.Component {
         }
     }
 
-    componentWillUpdate(nextProps) {
-        if (this.kmlLayer) {
-            if (nextProps.isVisible) {
-                this.kmlLayer.setMap(this.props.map);
-            }
-            else {
-                this.kmlLayer.setMap(null);
-            }
+    componentWillReceiveProps(nextProps) {
+
+        /* Don't do anything if isVisible doesn't change at all */
+        if (this.props.isVisible === nextProps.isVisible) {
+            return;
         }
+
+        if (nextProps.isVisible) {
+            this.kmlLayer.setMap(this.props.map);
+        }
+        else {
+            this.kmlLayer.setMap(null);
+        }
+
+        console.log("Update!!!");
     }
 
     componentWillUnmount() {

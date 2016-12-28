@@ -69,7 +69,7 @@ class App extends React.Component {
         /* Get Pontianak's Position and then go to there */
         let service = new window.google.maps.places.PlacesService(map);
 
-        service.textSearch({ query: "Pontianak" }, (result) => {
+        service.textSearch({ query: "pontianak" }, (result) => {
             this.defaultPosition = result[0].geometry.location;
             map.setCenter(this.defaultPosition);
 
