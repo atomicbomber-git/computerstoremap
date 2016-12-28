@@ -39,31 +39,31 @@ export default class EditModal extends React.Component {
                         </header>
 
                         <section className="modal-card-body">
-                            <form className="container">
+                            <form id="edit_form" className="container" onSubmit={this.props.handleFormSubmit}>
                                 <div className="control">
                                     <label className="label"> Nama: </label>
-                                    <input className="input" type="text" value={this.props.formData.name}/>
+                                    <input className="input" type="text" onChange={this.props.handleNameChange} value={this.props.formData.name}/>
                                 </div>
 
                                 <div className="control">
                                     <label className="label"> Latitude: </label>
-                                    <input className="input" type="number" value={this.props.formData.lat}/>
+                                    <input className="input" type="number" onChange={this.props.handleLatChange} value={this.props.formData.lat}/>
                                 </div>
 
                                 <div className="control">
                                     <label className="label"> Longitude: </label>
-                                    <input className="input" type="number" value={this.props.formData.lng}/>
+                                    <input className="input" type="number" onChange={this.props.handleLngChange} value={this.props.formData.lng}/>
                                 </div>
 
                                 <div className="control">
                                     <label className="label"> Deskripsi: </label>
-                                    <textarea className="textarea" value={this.props.formData.desc}></textarea>
+                                    <textarea className="textarea" onChange={this.props.handleDescChange} value={this.props.formData.desc}></textarea>
                                 </div>
                             </form>
                         </section>
 
                         <footer className="modal-card-foot">
-                            <a className="button is-primary"> Simpan </a>
+                            <button form="edit_form" className={this.props.isSubmitting ? "button is-primary is-loading" : "button is-primary"}> Simpan </button>
                             <a className="button" onClick={this.props.closeModal}> Batal </a>
                         </footer>
                     </div>

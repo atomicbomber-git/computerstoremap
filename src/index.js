@@ -18,15 +18,17 @@ class App extends React.Component {
 
         this.defaultCurrentPos = { name: "", lat: "", lng: "", desc: "" };
         this.defaultFormError = { name: "", lat: "", lng: "", desc: "" };
+        this.defaultModalFormData = { id: "111", name: "Alpha", lat: "1212", lng: "121212", desc: "Delta" };
 
         this.state = {
             locations: [],
             map: null,
             currentPos: this.defaultCurrentPos,
             formError: this.defaultFormError,
+            modalFormData: this.defaultModalFormData,
             isFormBeingSubmitted: false,
             isCurrentlyEditing: false,
-            currentlyEditedId: null
+            isModalCurrentlySubmitting: false
         };
 
         this.backendURL = "http://localhost/gis/gis_new";
@@ -43,6 +45,12 @@ class App extends React.Component {
         this.clearFormFields = this.clearFormFields.bind(this);
         this.gotoLocation = this.gotoLocation.bind(this);
         this.cancelEditing = this.cancelEditing.bind(this);
+
+        this.handleModalLatChange = this.handleModalLatChange.bind(this);
+        this.handleModalLngChange = this.handleModalLngChange.bind(this);
+        this.handleModalDescChange = this.handleModalDescChange.bind(this);
+        this.handleModalNameChange = this.handleModalNameChange.bind(this);
+        this.handleModalFormSubmit = this.handleModalFormSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -149,6 +157,53 @@ class App extends React.Component {
         this.setState({ currentPos: { ...this.state.currentPos, name: e.target.value } });
     }
 
+    /* Functions related to the modal edit form */
+    handleModalLatChange(e) {
+        this.setState({ modalFormData: { ...this.state.modalFormData, lat: e.target.value }});
+    }
+
+    handleModalLngChange(e) {
+        this.setState({ modalFormData: { ...this.state.modalFormData, lng: e.target.value }});
+    }
+
+    handleModalDescChange(e) {
+        this.setState({ modalFormData: { ...this.state.modalFormData, desc: e.target.value }});
+    }
+
+    handleModalNameChange(e) {
+        this.setState({ modalFormData: { ...this.state.modalFormData, name: e.target.value } });
+    }
+
+    handleModalFormSubmit(e) {
+        e.preventDefault();
+
+        this.setState({ isModalCurrentlySubmitting: true });
+
+        const {id, name, lat, lng, desc} = this.state.modalFormData;
+
+        const formPostFields = {
+            name: name,
+            lat: lat,
+            lng: lng,
+            desc: desc
+        };
+
+        axios.post(`${this.backendURL}/update_location/${id}`, formPostFields)
+            .then(
+                (response) => {
+                    this.setState({ isModalCurrentlySubmitting: false, isCurrentlyEditing: false });
+                    this.fetchLocations();
+                }
+            )
+            .catch(
+                (error) => {
+                    this.setState({ isModalCurrentlySubmitting: false, isCurrentlyEditing: false });
+                    console.log(error);
+                }
+            );
+
+    }
+
     handleFormSubmit(e) {
         e.preventDefault();
 
@@ -173,7 +228,23 @@ class App extends React.Component {
     }
 
     handleEditLocation(id) {
-        this.setState({ currentlyEditedId: id, isCurrentlyEditing: true });
+
+        /* Find the relevant location's data */
+        const location = this.state.locations.find((location) => {
+            return location.id === id;
+        });
+
+        /* Adapt to match EditModal's props */
+        const modalFormData = {
+            id: location.id,
+            name: location.name,
+            lat: location.latitude,
+            lng: location.longitude,
+            desc: location.description
+        };
+
+        /* Update the state so the EditModal component knows it's time to it to show */
+        this.setState({ isCurrentlyEditing: true, modalFormData: modalFormData });
     }
 
     handleDeleteLocation(id) {
@@ -213,7 +284,17 @@ class App extends React.Component {
         return (
             <div>
 
-                <EditModal isActive={this.state.isCurrentlyEditing} closeModal={this.cancelEditing} />
+                <EditModal
+                    handleLatChange={this.handleModalLatChange}
+                    handleLngChange={this.handleModalLngChange}
+                    handleDescChange={this.handleModalDescChange}
+                    handleNameChange={this.handleModalNameChange}
+                    handleFormSubmit={this.handleModalFormSubmit}
+
+                    formData={this.state.modalFormData}
+                    isActive={this.state.isCurrentlyEditing}
+                    isSubmitting={this.state.isModalCurrentlySubmitting}
+                    closeModal={this.cancelEditing} />
 
                 <section className="hero is-dark">
                     <div className="hero-body">

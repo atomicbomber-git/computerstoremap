@@ -22,6 +22,15 @@ export default class Marker extends React.Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.location !== this.props.location) {
+            /* Update location */
+            const {latitude, longitude} = nextProps.location;
+
+            this.marker.setPosition(new window.google.maps.LatLng(latitude, longitude));
+        }
+    }
+
     componentWillUnmount() {
         /* Unmounting. Destroying marker... */
         this.marker.setMap(null);

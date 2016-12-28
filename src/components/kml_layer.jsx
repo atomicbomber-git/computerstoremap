@@ -8,7 +8,8 @@ export default class KMLLayer extends React.Component {
                 this.props.resource,
                 {
                     suppressInfoWindows: true,
-                    preserveViewport: true
+                    preserveViewport: true,
+                    clickable: false
                 }
             );
 
