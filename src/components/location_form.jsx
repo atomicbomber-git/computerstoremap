@@ -29,7 +29,7 @@ export default class LocationForm extends React.Component {
         return (
             <form onSubmit={this.props.handleFormSubmit}>
                 <div className="control">
-                    <label className="label"> Name: </label>
+                    <label className="label"> Nama: </label>
                     <input className={this.getErrorData("name").style + " input"} onChange={this.props.handleNameChange} value={this.props.currentPos.name} type="text" placeholder="Location name"/>
                     {this.getErrorData("name").help}
                 </div>
@@ -47,13 +47,13 @@ export default class LocationForm extends React.Component {
                 </div>
 
                 <div className="control">
-                    <label className="label"> Description: </label>
+                    <label className="label"> Deskripsi: </label>
                     <textarea className={this.getErrorData("desc").style + " textarea"} onChange={this.props.handleDescChange} value={this.props.currentPos.desc} placeholder="Description"></textarea>
                     {this.getErrorData("desc").help}
                 </div>
 
                 <div className="control">
-                    <label className="label"> Upload Picture: </label>
+                    <label className="label"> Upload Gambar: </label>
                     <FileInput className="button is-fullwidth"/>
                 </div>
 

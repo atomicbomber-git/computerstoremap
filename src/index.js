@@ -11,6 +11,7 @@ import LocationList from "./components/location_list.jsx";
 import Marker from "./components/marker.jsx";
 import KMLLayerContainer from "./components/kml_layer_container.jsx";
 import EditModal from "./components/edit_modal.jsx";
+import ImageModal from "./components/image_modal.jsx";
 
 class App extends React.Component {
     constructor(props) {
@@ -18,7 +19,7 @@ class App extends React.Component {
 
         this.defaultCurrentPos = { name: "", lat: "", lng: "", desc: "" };
         this.defaultFormError = { name: "", lat: "", lng: "", desc: "" };
-        this.defaultModalFormData = { id: "111", name: "Alpha", lat: "1212", lng: "121212", desc: "Delta" };
+        this.defaultModalFormData = { id: "", name: "", lat: "0", lng: "0", desc: ""};
 
         this.state = {
             locations: [],
@@ -26,9 +27,12 @@ class App extends React.Component {
             currentPos: this.defaultCurrentPos,
             formError: this.defaultFormError,
             modalFormData: this.defaultModalFormData,
+            imageModalData: { "id": "", "image": null, "imageFileName": null },
             isFormBeingSubmitted: false,
-            isCurrentlyEditing: false,
-            isModalCurrentlySubmitting: false
+            isEditingLocation: false,
+            isViewingImage: false,
+            isModalCurrentlySubmitting: false,
+            isImageCurrentlySubmitting: false
         };
 
         this.backendURL = "http://localhost/gis/gis_new";
@@ -40,17 +44,21 @@ class App extends React.Component {
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleEditLocation = this.handleEditLocation.bind(this);
+        this.handleViewImage = this.handleViewImage.bind(this);
         this.handleDeleteLocation = this.handleDeleteLocation.bind(this);
         this.fetchLocations = this.fetchLocations.bind(this);
         this.clearFormFields = this.clearFormFields.bind(this);
         this.gotoLocation = this.gotoLocation.bind(this);
-        this.cancelEditing = this.cancelEditing.bind(this);
+        this.stopEditingLocation = this.stopEditingLocation.bind(this);
+        this.stopViewingImage = this.stopViewingImage.bind(this);
 
         this.handleModalLatChange = this.handleModalLatChange.bind(this);
         this.handleModalLngChange = this.handleModalLngChange.bind(this);
         this.handleModalDescChange = this.handleModalDescChange.bind(this);
         this.handleModalNameChange = this.handleModalNameChange.bind(this);
         this.handleModalFormSubmit = this.handleModalFormSubmit.bind(this);
+        this.handleImageFileChange = this.handleImageFileChange.bind(this);
+        this.handleImageFormSubmit = this.handleImageFormSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -120,8 +128,12 @@ class App extends React.Component {
     }
 
     /* Turn off the editing mode */
-    cancelEditing() {
-        this.setState({ isCurrentlyEditing: false });
+    stopEditingLocation() {
+        this.setState({ isEditingLocation: false });
+    }
+
+    stopViewingImage() {
+        this.setState({ isViewingImage: false });
     }
 
     gotoLocation(lat, lng) {
@@ -157,6 +169,37 @@ class App extends React.Component {
         this.setState({ currentPos: { ...this.state.currentPos, name: e.target.value } });
     }
 
+    handleFormSubmit(e) {
+        e.preventDefault();
+
+        this.setState({ isFormBeingSubmitted: true });
+
+        /* Build FormData object from the current state */
+        const formData = new FormData();
+        const {name, lat, lng, desc} = this.state.currentPos;
+        formData.append("name", name);
+        formData.append("lat", lat);
+        formData.append("lng", lng);
+        formData.append("desc", desc);
+
+        /* Attempt to submit the form to our backend service */
+        axios.post(`${this.backendURL}/save_location`, formData)
+            .then((response) => {
+                this.setState({ isFormBeingSubmitted: false });
+                this.clearFormError();
+                this.clearFormFields();
+                this.fetchLocations();
+            })
+            .catch((error) => {
+                this.setState({ isFormBeingSubmitted: false });
+
+                if (error.response) {
+                    this.setState({ "formError": error.response.data });
+                }
+
+            });
+    }
+
     /* Functions related to the modal edit form */
     handleModalLatChange(e) {
         this.setState({ modalFormData: { ...this.state.modalFormData, lat: e.target.value }});
@@ -174,57 +217,67 @@ class App extends React.Component {
         this.setState({ modalFormData: { ...this.state.modalFormData, name: e.target.value } });
     }
 
+    handleImageFileChange(e) {
+        this.setState({ imageModalData: {...this.state.imageModalData, image: e.target.files[0] }})
+    }
+
     handleModalFormSubmit(e) {
         e.preventDefault();
 
         this.setState({ isModalCurrentlySubmitting: true });
 
-        const {id, name, lat, lng, desc} = this.state.modalFormData;
+        const {id, name, lat, lng, desc, image} = this.state.modalFormData;
 
-        const formPostFields = {
-            name: name,
-            lat: lat,
-            lng: lng,
-            desc: desc
-        };
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("lat", lat);
+        formData.append("lng", lng);
+        formData.append("desc", desc);
+        formData.append("image", image);
 
-        axios.post(`${this.backendURL}/update_location/${id}`, formPostFields)
+        axios.post(`${this.backendURL}/update_location/${id}`, formData)
             .then(
                 (response) => {
-                    this.setState({ isModalCurrentlySubmitting: false, isCurrentlyEditing: false });
+                    this.setState({ isModalCurrentlySubmitting: false, isEditingLocation: false });
                     this.fetchLocations();
                 }
             )
             .catch(
                 (error) => {
-                    this.setState({ isModalCurrentlySubmitting: false, isCurrentlyEditing: false });
+                    this.setState({ isModalCurrentlySubmitting: false, isEditingLocation: false });
                     console.log(error);
                 }
             );
 
     }
 
-    handleFormSubmit(e) {
+    handleImageFormSubmit(e) {
         e.preventDefault();
+        this.setState({ isImageCurrentlySubmitting: true });
 
-        /* Attempt to save the location to the server */
-        this.setState({ isFormBeingSubmitted: true });
+        /* Create a FormData object and submit it! */
+        const formData = new FormData();
+        const {id, image} = this.state.imageModalData;
+        formData.append("image", image, image.name);
 
-        axios.post(`${this.backendURL}/save_location`, this.state.currentPos)
-            .then((response) => {
-                this.setState({ isFormBeingSubmitted: false });
-                this.clearFormError();
-                this.clearFormFields();
-                this.fetchLocations();
-            })
-            .catch((error) => {
-                this.setState({ isFormBeingSubmitted: false });
+        axios.post(`${this.backendURL}/save_location_image/${id}`, formData)
+            .then(
+                (response) => {
+                    this.setState({
+                        isImageCurrentlySubmitting: false,
+                        imageModalData: { id: "", "image": null, "imageFileName": response.data.filename }
+                    });
 
-                if (error.response) {
-                    this.setState({ "formError": error.response.data });
+                    this.fetchLocations();
+                    
                 }
+            )
+            .catch(
+                (error) => {
+                    this.setState({ isImageCurrentlySubmitting: false, isViewingImage: false, imageModalData: { id: "", "image": null } });
+                }
+            );
 
-            });
     }
 
     handleEditLocation(id) {
@@ -244,7 +297,12 @@ class App extends React.Component {
         };
 
         /* Update the state so the EditModal component knows it's time to it to show */
-        this.setState({ isCurrentlyEditing: true, modalFormData: modalFormData });
+        this.setState({ isEditingLocation: true, modalFormData: modalFormData });
+    }
+
+    handleViewImage(id, imageFileName) {
+        this.setState({ isViewingImage: true, imageModalData: { ...this.state.imageModalData, id: id, imageFileName: imageFileName} })
+        console.log("View image!!! " + imageFileName);
     }
 
     handleDeleteLocation(id) {
@@ -263,12 +321,10 @@ class App extends React.Component {
 
         const listStyle = {
             "height": "500px",
-            "padding": "10px",
             "overflow": "auto"
         };
 
         const mapStyle = {
-            background:"green",
             width: "100%",
             height: "450px"
         };
@@ -277,9 +333,16 @@ class App extends React.Component {
         let markers = null;
         if ( this.state.map ) {
             markers = this.state.locations.map((location, index) => {
-                return (<Marker map={this.state.map} location={location} key={location.id}/>);
+                return (<Marker map={this.state.map} imageSource={this.backendURL + "/public/images"} location={location} key={location.id}/>);
             });
         }
+
+        const map = (
+            <div>
+                <div id="map" style={mapStyle}>
+                </div>
+            </div>
+        );
 
         return (
             <div>
@@ -292,9 +355,21 @@ class App extends React.Component {
                     handleFormSubmit={this.handleModalFormSubmit}
 
                     formData={this.state.modalFormData}
-                    isActive={this.state.isCurrentlyEditing}
+                    isActive={this.state.isEditingLocation}
                     isSubmitting={this.state.isModalCurrentlySubmitting}
-                    closeModal={this.cancelEditing} />
+                    closeModal={this.stopEditingLocation}
+
+                />
+
+                <ImageModal
+                    isActive={this.state.isViewingImage}
+                    closeModal={this.stopViewingImage}
+                    handleFormSubmit={this.handleImageFormSubmit}
+                    handleFileChange={this.handleImageFileChange}
+                    isSubmitting={this.state.isImageCurrentlySubmitting}
+                    imageSource={this.backendURL + "/public/images"}
+                    data={this.state.imageModalData}
+                />
 
                 <section className="hero is-dark">
                     <div className="hero-body">
@@ -317,22 +392,26 @@ class App extends React.Component {
                         <div className="columns">
                             <div className="column is-3">
                                 <h2 className="title is-4"> Tambah Lokasi </h2>
-                                <LocationForm
-                                    handleLatChange={this.handleLatChange}
-                                    handleLngChange={this.handleLngChange}
-                                    handleDescChange={this.handleDescChange}
-                                    handleNameChange={this.handleNameChange}
-                                    handleFormSubmit={this.handleFormSubmit}
-                                    isFormBeingSubmitted={this.state.isFormBeingSubmitted}
-                                    formError={this.state.formError}
-                                    currentPos={this.state.currentPos}
-                                    addLocation={this.addLocation} />
+                                <div className="box">
+                                    <LocationForm
+                                        handleLatChange={this.handleLatChange}
+                                        handleLngChange={this.handleLngChange}
+                                        handleDescChange={this.handleDescChange}
+                                        handleNameChange={this.handleNameChange}
+                                        handleFormSubmit={this.handleFormSubmit}
+                                        isFormBeingSubmitted={this.state.isFormBeingSubmitted}
+                                        formError={this.state.formError}
+                                        currentPos={this.state.currentPos}
+                                        addLocation={this.addLocation} />
+                                </div>
                             </div>
                             <div className="column is-6">
                                 <h2 className="title is-4"> Peta </h2>
-                                <KMLLayerContainer map={this.state.map} />
-                                <div id="map" style={mapStyle}> </div>
-                                {markers}
+                                <div className="box">
+                                    <KMLLayerContainer map={this.state.map} />
+                                    {map}
+                                    {markers}
+                                </div>
                             </div>
                             <div className="column is-3">
                                 <h2 className="title is-4"> Daftar Lokasi </h2>
@@ -342,6 +421,7 @@ class App extends React.Component {
                                         locations={this.state.locations}
                                         handleDeleteLocation={this.handleDeleteLocation}
                                         handleEditLocation={this.handleEditLocation}
+                                        handleViewImage={this.handleViewImage}
                                     />
                                 </div>
                             </div>

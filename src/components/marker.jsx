@@ -43,6 +43,9 @@ export default class Marker extends React.Component {
             <div style={infoWindowStyle}>
                 <div ref={(infoWindowNode) => { this.infoWindowNode = infoWindowNode; }}>
                     <h3 className="title is-5 has-text-centered"> {this.props.location.name} </h3>
+                    <figure className="image is-128x128">
+                        <img src={this.props.imageSource + "/" + this.props.location.image}/>
+                    </figure>
                     <p> <strong> Latitude: </strong> </p>
                     <p> {this.props.location.latitude} </p>
                     <p> <strong> Longitude: </strong> </p>

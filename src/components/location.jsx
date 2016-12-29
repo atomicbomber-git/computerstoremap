@@ -21,25 +21,30 @@ export default class Location extends React.Component {
                 <div className="control has-addons" style={navStyle}>
 
                     <button onClick={() => { this.props.handleEditLocation(this.props.id) }} className="button is-small">
-                        Sunting
                         <span className="icon is-small">
                             <i className="fa fa-pencil"> </i>
                         </span>
                     </button>
 
                     <button onClick={() => { this.props.gotoLocation(latitude, longitude) } } className="button is-small">
-                        Arahkan
                         <span className="icon is-small">
                             <i className="fa fa-map"> </i>
                         </span>
                     </button>
 
+                    <button onClick={() => { this.props.handleViewImage(this.props.id, this.props.location.image) }} className="button is-small">
+                        <span className="icon is-small">
+                            <i className="fa fa-photo"> </i>
+                        </span>
+                    </button>
+
                     <button onClick={() => { this.props.handleDeleteLocation(this.props.id) } } className="button is-danger is-small">
-                        Hapus
                         <span className="icon is-small">
                             <i className="fa fa-trash"> </i>
                         </span>
                     </button>
+
+
 
                 </div>
             </div>

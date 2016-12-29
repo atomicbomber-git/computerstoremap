@@ -1,6 +1,7 @@
 import React from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import "../css/modal_transition.css";
+import FileInput from "./file_input.jsx";
 
 export default class EditModal extends React.Component {
     componentDidMount() {
@@ -59,6 +60,12 @@ export default class EditModal extends React.Component {
                                     <label className="label"> Deskripsi: </label>
                                     <textarea className="textarea" onChange={this.props.handleDescChange} value={this.props.formData.desc}></textarea>
                                 </div>
+
+                                <div className="control">
+                                    <label className="label"> Upload Gambar: </label>
+                                    <FileInput handleFileChange={this.props.handleFileChange} className="button is-fullwidth"/>
+                                </div>
+
                             </form>
                         </section>
 
