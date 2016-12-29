@@ -53,11 +53,6 @@ export default class LocationForm extends React.Component {
                 </div>
 
                 <div className="control">
-                    <label className="label"> Upload Gambar: </label>
-                    <FileInput className="button is-fullwidth"/>
-                </div>
-
-                <div className="control">
                     <button className={this.buttonStyle()}>
                         Add Location
                     </button>
