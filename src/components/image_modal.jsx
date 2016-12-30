@@ -5,7 +5,10 @@ import FileInput from "./file_input.jsx";
 
 export default class ImageModal extends React.Component {
     componentDidMount() {
+
         this.escapeHandler = this.handleKeyDown.bind(this);
+        this.getImage = this.getImage.bind(this);
+
         window.addEventListener("keydown", this.escapeHandler);
     }
 
@@ -26,6 +29,22 @@ export default class ImageModal extends React.Component {
         }
     }
 
+    getImage() {
+        if (this.props.data.imageFileName) {
+            return (
+                <figure className="image is-2by1">
+                    <img src={this.props.imageSource + "/" + this.props.data.imageFileName} role="presentation"/>
+                </figure>
+            );
+        }
+
+        return (
+            <figure className="image is-2by1">
+                <p> Gambar belum ada... </p>
+            </figure>
+        );
+    }
+
     render() {
         let modal = null;
         if (this.props.isActive) {
@@ -42,9 +61,7 @@ export default class ImageModal extends React.Component {
                         <section className="modal-card-body">
 
                             <div className="box">
-                                <figure className="image is-2by1">
-                                    <img src={this.props.imageSource + "/" + this.props.data.imageFileName} role="presentation"/>
-                                </figure>
+                                {this.getImage()}
                             </div>
 
                             <form id="edit_form" onSubmit={this.props.handleFormSubmit}>
@@ -53,7 +70,9 @@ export default class ImageModal extends React.Component {
                                     <FileInput className="button is-fullwidth" handleFileChange={this.props.handleFileChange}/>
                                 </div>
 
-                                <button form="edit_form" className={this.props.isSubmitting ? "button is-info is-loading" : "button is-info"}>
+                                <button form="edit_form" className={this.props.isSubmitting ? "button is-info is-loading" : "button is-info"}
+                                    disabled={this.props.isDisabled ? true : false}
+                                    >
                                     Upload File Terpilih
                                     <span className="icon is-small">
                                         <i className="fa fa-upload"></i>

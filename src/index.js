@@ -27,7 +27,7 @@ class App extends React.Component {
             currentPos: this.defaultCurrentPos,
             formError: this.defaultFormError,
             modalFormData: this.defaultModalFormData,
-            imageModalData: { "id": "", "image": null, "imageFileName": null },
+            imageModalData: { id: "", image: null, imageFileName: null, imageFieldFileName: "" },
             isFormBeingSubmitted: false,
             isEditingLocation: false,
             isViewingImage: false,
@@ -265,7 +265,7 @@ class App extends React.Component {
                 (response) => {
                     this.setState({
                         isImageCurrentlySubmitting: false,
-                        imageModalData: { id: "", "image": null, "imageFileName": response.data.filename }
+                        imageModalData: { ...this.state.imageModalData, image: null, imageFileName: response.data.filename }
                     });
 
                     this.fetchLocations();
@@ -275,7 +275,7 @@ class App extends React.Component {
             .catch(
                 (error) => {
                     console.log(error);
-                    this.setState({ isImageCurrentlySubmitting: false, isViewingImage: false, imageModalData: { id: "", "image": null } });
+                    this.setState({ isImageCurrentlySubmitting: false, imageModalData: { ...this.state.imageModalData, image: null } });
                 }
             );
 
@@ -370,6 +370,7 @@ class App extends React.Component {
                     handleFileChange={this.handleImageFileChange}
                     isSubmitting={this.state.isImageCurrentlySubmitting}
                     imageSource={this.backendURL + "/public/images"}
+                    isDisabled={this.state.imageModalData.image ? false : true}
                     data={this.state.imageModalData}
                 />
 
