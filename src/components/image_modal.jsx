@@ -50,10 +50,15 @@ export default class ImageModal extends React.Component {
                             <form id="edit_form" onSubmit={this.props.handleFormSubmit}>
                                 <div className="control">
                                     <label className="label"> Tambah / Ganti Gambar </label>
-                                    <FileInput className="button" handleFileChange={this.props.handleFileChange}/>
+                                    <FileInput className="button is-fullwidth" handleFileChange={this.props.handleFileChange}/>
                                 </div>
 
-                                <button form="edit_form" className={this.props.isSubmitting ? "button is-primary is-loading" : "button is-primary"}> Simpan </button>
+                                <button form="edit_form" className={this.props.isSubmitting ? "button is-info is-loading" : "button is-info"}>
+                                    Upload File Terpilih
+                                    <span className="icon is-small">
+                                        <i className="fa fa-upload"></i>
+                                    </span>
+                                </button>
                             </form>
 
                         </section>

@@ -35,7 +35,7 @@ class App extends React.Component {
             isImageCurrentlySubmitting: false
         };
 
-        this.backendURL = "http://localhost/gis/gis_new";
+        this.backendURL = "http://localhost/gis/api";
 
         this.setPosition = this.setPosition.bind(this);
         this.handleLatChange = this.handleLatChange.bind(this);
@@ -269,7 +269,7 @@ class App extends React.Component {
                     });
 
                     this.fetchLocations();
-                    
+
                 }
             )
             .catch(
@@ -371,7 +371,7 @@ class App extends React.Component {
                     data={this.state.imageModalData}
                 />
 
-                <section className="hero is-dark">
+                <section className="hero is-primary">
                     <div className="hero-body">
                         <div className="container">
                             <h1 className="title">

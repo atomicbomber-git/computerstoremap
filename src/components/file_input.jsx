@@ -36,7 +36,7 @@ export default class FileInput extends React.Component {
                 <label htmlFor="file-input" className={this.props.className}>
                     Pilih File
                     <span className="icon is-small">
-                        <i className="fa fa-upload"></i>
+                        <i className="fa fa-folder-open"></i>
                     </span>
                 </label>
 
