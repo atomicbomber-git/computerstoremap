@@ -274,6 +274,7 @@ class App extends React.Component {
             )
             .catch(
                 (error) => {
+                    console.log(error);
                     this.setState({ isImageCurrentlySubmitting: false, isViewingImage: false, imageModalData: { id: "", "image": null } });
                 }
             );
@@ -301,6 +302,7 @@ class App extends React.Component {
     }
 
     handleViewImage(id, imageFileName) {
+        console.log(id);
         this.setState({ isViewingImage: true, imageModalData: { ...this.state.imageModalData, id: id, imageFileName: imageFileName} })
         console.log("View image!!! " + imageFileName);
     }

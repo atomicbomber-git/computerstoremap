@@ -1,5 +1,4 @@
 import React from "react";
-import FileInput from "./file_input.jsx";
 
 export default class LocationForm extends React.Component {
     constructor(props) {
