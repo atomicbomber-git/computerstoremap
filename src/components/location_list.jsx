@@ -22,6 +22,10 @@ export default class LocationList extends React.Component {
         const {searchString} = this.state;
         const isSearching = searchString === "" ? false : true;
         const searchRegExp = new RegExp(searchString, "i");
+        const listStyle = {
+            "height": "500px",
+            "overflow": "auto"
+        };
 
         let locations = this.props.locations
             .filter((location) => {
@@ -72,9 +76,11 @@ export default class LocationList extends React.Component {
                         {messageBox}
                     </form>
                 </div>
-                <FlipMove>
-                    {locations}
-                </FlipMove>
+                <div style={listStyle}>
+                    <FlipMove>
+                        {locations}
+                    </FlipMove>
+                </div>
             </div>
         );
     }

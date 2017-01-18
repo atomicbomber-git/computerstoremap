@@ -320,12 +320,6 @@ class App extends React.Component {
     }
 
     render() {
-
-        const listStyle = {
-            "height": "500px",
-            "overflow": "auto"
-        };
-
         const mapStyle = {
             width: "100%",
             height: "450px"
@@ -418,15 +412,13 @@ class App extends React.Component {
                             </div>
                             <div className="column is-3">
                                 <h2 className="title is-4"> Daftar Lokasi </h2>
-                                <div style={listStyle}>
-                                    <LocationList
-                                        gotoLocation={this.gotoLocation}
-                                        locations={this.state.locations}
-                                        handleDeleteLocation={this.handleDeleteLocation}
-                                        handleEditLocation={this.handleEditLocation}
-                                        handleViewImage={this.handleViewImage}
-                                    />
-                                </div>
+                                <LocationList
+                                    gotoLocation={this.gotoLocation}
+                                    locations={this.state.locations}
+                                    handleDeleteLocation={this.handleDeleteLocation}
+                                    handleEditLocation={this.handleEditLocation}
+                                    handleViewImage={this.handleViewImage}
+                                />
                             </div>
                         </div>
                     </div>
